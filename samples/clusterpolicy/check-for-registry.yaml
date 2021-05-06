@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: check-registery
+spec:
+  validationFailureAction: audit
+  rules:
+  - name: check-for-registry
+    match:
+      resources:
+        kinds:
+        - Pod
+    exclude:
+      resources:
+        namespaces:
+          - "kube-system"
+          - "kube-public"
+          - "kyverno"
+    validate:
+      message: "Registry is not allowed"
+      pattern:
+        spec:
+          containers:
+          - name: "*"
+            image: "docker.io/citizenstig/*"
